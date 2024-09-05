@@ -1,0 +1,30 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+import Custom from "../../layouts/Custom.astro";
+import { BRAND } from "astro:schema";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("blog");
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<"blog">;
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+{
+	post.id === "third-post.md" ? (
+		<Custom frontmatter={post.data}>
+			<Content />
+		</Custom>
+	) : (
+		<BlogPost {...post.data}>
+			<Content />
+		</BlogPost>
+	)
+}
